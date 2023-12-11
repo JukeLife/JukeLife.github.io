@@ -1,5 +1,12 @@
 [
     {
+        "date": [2023, 12, 11],
+        "link": "/pages/work/post-OuroborosNodeNetwork.html",
+        "title": "Ouroboros Node Network",
+        "summary": "末端を持たない環状ネットワークの考案・検証について",
+        "image": "/pages/work/post-OuroborosNodeNetwork/Neo Ouroboros (Ouroboros Node Network).jpg"
+    },
+    {
         "date": [2023, 10, 27],
         "link": "/pages/work/post-Circlock.html",
         "title": "Circlock",
