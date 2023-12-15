@@ -38,10 +38,10 @@ function Caesarwave() {
 
     const getSha256 = async (data, base = 16) => {
         const buf = new TextEncoder().encode(data);
-        const digest = await crypto.subtle.digest('SHA-256', buf);
+        const hash = await crypto.subtle.digest('SHA-256', buf);
         const digit = Math.ceil(Math.log(256) / Math.log(base));
 
-        return Array.from(new Uint8Array(digest))
+        return Array.from(new Uint8Array(hash))
             .map((val) => val.toString(base).padStart(digit, '0'))
             .join('');
     };
