@@ -13,6 +13,16 @@ const sendDataInfoElement = document.getElementById('sendDataInfo');
 const userNodeGraphicElement = document.getElementById('userNodeGraphic');
 const sendDataGraphicElement = document.getElementById('sendDataGraphic');
 
+const logFunctionElement = document.getElementById('logFunction');
+
+const userListFunctionElement = document.getElementById('userListFunction');
+const sendStoreListFunctionElement = document.getElementById('sendStoreListFunction');
+const getStoreListFunctionElement = document.getElementById('getStoreListFunction');
+const sendDataInfoFunctionElement = document.getElementById('sendDataInfoFunction');
+
+const userNodeGraphicFunctionElement = document.getElementById('userNodeGraphicFunction');
+const sendDataGraphicFunctionElement = document.getElementById('sendDataGraphicFunction');
+
 const userNumElement = document.getElementById('userNum');
 const userNameElement = document.getElementById('userName');
 const sendUserNameElementA = document.getElementById('sendUserNameA');
@@ -88,6 +98,64 @@ function getFlagColor(flag) {
     }
 
     return res;
+}
+
+async function convertCanvasToImage(canvasElement, option) {
+    const res = await new Promise((resolve, reject) =>
+        canvasElement.toBlob(
+            (blob) => {
+                resolve(URL.createObjectURL(blob));
+                reject();
+            },
+            option.type,
+            option.quality
+        )
+    );
+
+    return res;
+}
+
+function downloadTextFile(text, fileName) {
+    generateFileFromTextData(text, fileName, 'text/plain');
+}
+
+function downloadDataFile(text, fileName) {
+    generateFileFromTextData(text, fileName, 'text/csv');
+}
+
+function generateFileFromTextData(text, fileName, type) {
+    const blob = new Blob([text], { type: type });
+
+    downloadLink(URL.createObjectURL(blob), fileName);
+}
+
+function moveNewPage(url) {
+    const linkElement = document.createElement('a');
+
+    linkElement.href = url;
+    linkElement.target = '_blank';
+    linkElement.rel = 'noreferrer';
+    linkElement.click();
+
+    return linkElement;
+}
+
+function downloadLink(url, fileName) {
+    const linkElement = document.createElement('a');
+
+    linkElement.href = url;
+    linkElement.download = fileName;
+    linkElement.click();
+
+    return linkElement;
+}
+
+function hideElement(element, hide) {
+    if (hide) {
+        element.classList.add('hide');
+    } else {
+        element.classList.remove('hide');
+    }
 }
 
 // Interface
@@ -191,6 +259,14 @@ function pushErrorLog(text) {
     pushLog(text, 'red');
 }
 
+function saveLog() {
+    const data = logElement.innerText;
+
+    if (!data) return;
+
+    downloadTextFile(data, 'Log.txt');
+}
+
 function drawNodeGraphic(canvas, option) {
     canvas.fillStyle = option.lineColor;
 
@@ -242,7 +318,11 @@ function updateUserNodeGraphic() {
 
     const globalUsers = ouroborosNodeNetwork.getGlobalUsersData();
 
-    if (!globalUsers) return;
+    if (!globalUsers) {
+        hideElement(userNodeGraphicFunctionElement, true);
+
+        return;
+    }
 
     const canvas = userNodeGraphicElement.getContext('2d');
     const canvasWidth = userNodeGraphicElement.width;
@@ -272,6 +352,34 @@ function updateUserNodeGraphic() {
             lineColor: '#211',
         });
     }
+
+    hideElement(userNodeGraphicFunctionElement, false);
+}
+
+async function exeUserNodeGraphic(mode) {
+    const targetElement = document.getElementById('userNodeGraphic');
+    const exportFileName = 'User Node Graphic.png';
+
+    let res;
+
+    switch (mode) {
+        case 'show':
+            res = await convertCanvasToImage(targetElement, {
+                type: 'image/png',
+                quality: 1,
+            });
+
+            moveNewPage(res);
+            break;
+        case 'download':
+            res = await convertCanvasToImage(targetElement, {
+                type: 'image/png',
+                quality: 1,
+            });
+
+            downloadLink(res, exportFileName);
+            break;
+    }
 }
 
 function updateSendDataGraphic() {
@@ -284,11 +392,19 @@ function updateSendDataGraphic() {
     const postUser = selectUser;
     const sendUser = selectSendUser;
 
-    if (!postUser || !sendUser) return;
+    if (!postUser || !sendUser || ouroborosNodeNetwork.isSameUser(postUser, sendUser)) {
+        hideElement(sendDataGraphicFunctionElement, true);
+
+        return;
+    }
 
     const sendStore = ouroborosNodeNetwork.returnSendStore(postUser, sendUser);
 
-    if (!sendStore) return;
+    if (!sendStore) {
+        hideElement(sendDataGraphicFunctionElement, true);
+
+        return;
+    }
 
     const TAU = 2 * Math.PI;
 
@@ -332,7 +448,11 @@ function updateSendDataGraphic() {
         });
     }
 
-    if (!runDataResult) return;
+    if (!runDataResult) {
+        hideElement(sendDataGraphicFunctionElement, false);
+
+        return;
+    }
 
     const searchUserIndex = (userData) => {
         if (userData === undefined) return -1;
@@ -433,6 +553,34 @@ function updateSendDataGraphic() {
             lineColor: '#eee',
         });
     });
+
+    hideElement(sendDataGraphicFunctionElement, false);
+}
+
+async function exeSendDataGraphic(mode) {
+    const targetElement = document.getElementById('sendDataGraphic');
+    const exportFileName = 'Send Data Graphic.png';
+
+    let res;
+
+    switch (mode) {
+        case 'show':
+            res = await convertCanvasToImage(targetElement, {
+                type: 'image/png',
+                quality: 1,
+            });
+
+            moveNewPage(res);
+            break;
+        case 'download':
+            res = await convertCanvasToImage(targetElement, {
+                type: 'image/png',
+                quality: 1,
+            });
+
+            downloadLink(res, exportFileName);
+            break;
+    }
 }
 
 function updateSendDataInfo() {
@@ -470,9 +618,29 @@ function updateSendDataInfo() {
                 </tbody>
             </table>
         `;
+
+        hideElement(sendDataInfoFunctionElement, false);
     } else {
         sendDataInfoElement.innerHTML = '';
+
+        hideElement(sendDataInfoFunctionElement, true);
     }
+}
+
+function saveSendDataInfo() {
+    const data = runDataResult;
+
+    if (!data) return;
+
+    let res = '番号,フラグ,送信元,送信先,サンプル,長さ\n';
+
+    data.map((item, index) => {
+        res += `${index + 1},${item.flag},${item.processUserName ? item.processUserName : 'NONE'},${item.nextUserName ? item.nextUserName : 'NONE'},${
+            item.dataSummary ? item.dataSummary : 'NULL'
+        },${item.dataSummary ? item.dataLength : '0'}\n`;
+    });
+
+    downloadDataFile(res, 'Send Data Info.csv');
 }
 
 function updateDisplay(updateInput = true) {
@@ -523,10 +691,28 @@ function updateUserList() {
                 </tbody>
             </table>
         `;
+
+        hideElement(userListFunctionElement, false);
     } else {
         userListElement.innerHTML = '';
         userNameElement.value = '';
+
+        hideElement(userListFunctionElement, true);
     }
+}
+
+function saveUserList() {
+    const data = ouroborosNodeNetwork.getGlobalUsersData();
+
+    if (!data) return;
+
+    let res = 'IPv4,IPv6,ユーザー名,公開鍵\n';
+
+    data.map((user) => {
+        res += `${user.userIPv4Address},${user.userIPv6Address},${user.userName},${user.publicKey}\n`;
+    });
+
+    downloadDataFile(res, 'User List.csv');
 }
 
 function updateUserInformation() {
@@ -567,11 +753,29 @@ function updateSendStoreList() {
                 </tbody>
             </table>
         `;
+
+        hideElement(sendStoreListFunctionElement, false);
     } else {
         sendStoreListElement.innerHTML = '';
         sendUserNameElementA.value = '';
         sendUserNameElementB.value = '';
+
+        hideElement(sendStoreListFunctionElement, true);
     }
+}
+
+function saveSendStoreList() {
+    const data = selectUser ? ouroborosNodeNetwork.returnSendStores(selectUser) : undefined;
+
+    if (!data) return;
+
+    let res = '送信先,マップ,データ\n';
+
+    data.map((item) => {
+        res += `${item.user.userName},${item.relayMap ? item.relayMap.map((item) => item.userName).join(' → ') : 'NULL'},${item.data ? item.data : 'NULL'}\n`;
+    });
+
+    downloadDataFile(res, 'Send Store List.csv');
 }
 
 function updateGetStoreList() {
@@ -626,9 +830,33 @@ function updateGetStoreList() {
                 </tbody>
             </table>
         `;
+
+        hideElement(getStoreListFunctionElement, false);
     } else {
         getStoreListElement.innerHTML = '';
+
+        hideElement(getStoreListFunctionElement, true);
     }
+}
+
+function saveGetStoreList() {
+    const data = selectUser ? ouroborosNodeNetwork.returnGetStores(selectUser) : undefined;
+
+    if (!data) return;
+
+    let res = '送信元,日時,フラグ,データ\n';
+
+    data.map((item) => {
+        if (item.container) {
+            item.container.map((container) => {
+                res += `${item.user.userName},${getTimestampString(container.timestamp)},${container.flag},${container.data ? container.data : 'NULL'}\n`;
+            });
+        } else {
+            res += `${item.user.userName}\n`;
+        }
+    });
+
+    downloadDataFile(res, 'Get Store List.csv');
 }
 
 function updateSendData() {

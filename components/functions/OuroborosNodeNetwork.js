@@ -67,6 +67,13 @@ function OuroborosNodeNetwork() {
         return globalUsers.length > 0 ? globalUsers.map((user) => user.getPublicProfile()) : undefined;
     };
 
+    this.isSameUser = (userDataA, userDataB) => {
+        const dataA = getUserData(userDataA);
+        const dataB = getUserData(userDataB);
+
+        return dataA.userName === dataB.userName && (dataA.userIPv4Address === dataB.userIPv4Address || dataA.userIPv6Address === dataB.userIPv6Address);
+    };
+
     // User
 
     this.createUser = (userName = undefined, runBefore, runAfter) => {

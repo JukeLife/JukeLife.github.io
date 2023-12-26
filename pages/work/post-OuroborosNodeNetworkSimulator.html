@@ -62,17 +62,47 @@
                         <pre id="log" style="height: 320px"></pre>
                     </div>
 
+                    <fieldset id="logFunction">
+                        <button onclick="saveLog()">保存</button>
+                    </fieldset>
+
                     <div id="userList" class="list"></div>
+
+                    <fieldset id="userListFunction" class="hide">
+                        <button onclick="saveUserList()">保存</button>
+                    </fieldset>
 
                     <div id="sendStoreList" class="list"></div>
 
+                    <fieldset id="sendStoreListFunction" class="hide">
+                        <button onclick="saveSendStoreList()">保存</button>
+                    </fieldset>
+
                     <div id="getStoreList" class="list"></div>
+
+                    <fieldset id="getStoreListFunction" class="hide">
+                        <button onclick="saveGetStoreList()">保存</button>
+                    </fieldset>
+
+                    <div id="sendDataInfo" class="list"></div>
+
+                    <fieldset id="sendDataInfoFunction" class="hide">
+                        <button onclick="saveSendDataInfo()">保存</button>
+                    </fieldset>
 
                     <canvas id="userNodeGraphic" class="graphic" width="1920" height="1080"></canvas>
 
+                    <fieldset id="userNodeGraphicFunction" class="hide">
+                        <button onclick="exeUserNodeGraphic('show')">表示</button>
+                        <button onclick="exeUserNodeGraphic('download')">保存</button>
+                    </fieldset>
+
                     <canvas id="sendDataGraphic" class="graphic" width="1920" height="1080"></canvas>
 
-                    <div id="sendDataInfo" class="list"></div>
+                    <fieldset id="sendDataGraphicFunction" class="hide">
+                        <button onclick="exeSendDataGraphic('show')">表示</button>
+                        <button onclick="exeSendDataGraphic('download')">保存</button>
+                    </fieldset>
                 </div>
 
                 <div class="tab bottom right">

@@ -82,6 +82,10 @@
     opacity: 0;
 }
 
+.hide {
+    display: none;
+}
+
 .list {
     overflow-y: scroll;
     max-height: 320px;
