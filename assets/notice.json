@@ -1,5 +1,10 @@
 [
     {
+        "date": [2023, 12, 31],
+        "text": "作品「Bad Apple!! but It is Encrypted by DES-ECB」を投稿しました。",
+        "link": "https://youtu.be/Zn_rOM26_5s"
+    },
+    {
         "date": [2023, 12, 26],
         "text": "作品「Ouroboros Node Network Simulator」を更新しました。",
         "link": "/pages/work/post-OuroborosNodeNetworkSimulator.html"
