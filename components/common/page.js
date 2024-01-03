@@ -28,7 +28,7 @@
                 <a href="/pages/term.html">TERM</a>
             </div>
             <div class="credit">
-                Copyright © 2023 JukeLife all rights reserved.
+                Copyright © 2024 JukeLife all rights reserved.
             </div>
         `;
 
